@@ -26,9 +26,12 @@ export const Header = () => {
     >
       <nav className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          <div className="text-2xl font-bold">
-            <span className="text-neon-cyan">SKY</span>
-            <span className="text-neon-purple">FLOW</span>
+          <div className="flex items-center">
+            <img 
+              src="/logo.png" 
+              alt="SkyFlow Logo" 
+              className="h-10 w-auto"
+            />
           </div>
           
           <div className="hidden md:flex items-center space-x-8">
