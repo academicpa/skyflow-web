@@ -175,4 +175,13 @@
   .bg-gradient-accent {
     background: var(--gradient-accent);
   }
+
+  /* Polaroid card styles */
+  .polaroid-card {
+    cursor: pointer;
+  }
+  
+  .polaroid-card:hover {
+    z-index: 10;
+  }
 }
