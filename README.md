@@ -1,73 +1,107 @@
-# Welcome to your Lovable project
+# Skyflow Production
 
-## Project info
+## Acerca del Proyecto
 
-**URL**: https://lovable.dev/projects/1cb41c0b-753c-4ca6-ab3a-1d6665334f30
+Sitio web oficial de **Skyflow Production**, estudio de producción musical y audiovisual de clase mundial especializado en crear experiencias sonoras y visuales que conectan con audiencias globales.
 
-## How can I edit this code?
+**Dominio**: [skyflowproduction.com](https://skyflowproduction.com)
 
-There are several ways of editing your application.
+## Servicios
 
-**Use Lovable**
+- **Producción Musical**: Composición, arreglos y producción integral con estándares internacionales
+- **Videos Musicales**: Narrativa visual cinematográfica desde el concepto hasta la entrega final en 4K
+- **Mezcla & Masterización**: Procesamiento de audio con tecnología de vanguardia
+- **Diseño Sonoro**: Paisajes sonoros inmersivos y efectos especiales únicos
+- **Grabación**: Estudios acústicamente tratados con equipos de gama alta
+- **Postproducción**: Edición avanzada, color grading y VFX
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/1cb41c0b-753c-4ca6-ab3a-1d6665334f30) and start prompting.
+## Tecnologías Utilizadas
 
-Changes made via Lovable will be committed automatically to this repo.
+- **Frontend**: React 18 + TypeScript
+- **Styling**: Tailwind CSS + shadcn/ui
+- **Build Tool**: Vite
+- **Routing**: React Router
+- **State Management**: TanStack Query
+- **Icons**: Lucide React
+- **Animations**: CSS Animations + Tailwind
 
-**Use your preferred IDE**
+## Instalación y Desarrollo
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Prerrequisitos
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- Node.js (versión 18 o superior)
+- npm o yarn
 
-Follow these steps:
+### Pasos de Instalación
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+```bash
+# 1. Clonar el repositorio
+git clone <URL_DEL_REPOSITORIO>
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# 2. Navegar al directorio del proyecto
+cd skyflow
 
-# Step 3: Install the necessary dependencies.
-npm i
+# 3. Instalar dependencias
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# 4. Iniciar el servidor de desarrollo
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Scripts Disponibles
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+# Desarrollo
+npm run dev          # Inicia el servidor de desarrollo
 
-**Use GitHub Codespaces**
+# Construcción
+npm run build        # Construye la aplicación para producción
+npm run build:dev    # Construye en modo desarrollo
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+# Otros
+npm run lint         # Ejecuta el linter
+npm run preview      # Previsualiza la build de producción
+```
 
-## What technologies are used for this project?
+## Estructura del Proyecto
 
-This project is built with:
+```
+src/
+├── components/          # Componentes React
+│   ├── ui/             # Componentes de UI base (shadcn/ui)
+│   ├── Header.tsx      # Navegación principal
+│   ├── Hero.tsx        # Sección hero
+│   ├── Services.tsx    # Servicios ofrecidos
+│   ├── Portfolio.tsx   # Portafolio de trabajos
+│   ├── Contact.tsx     # Formulario de contacto
+│   └── Footer.tsx      # Pie de página
+├── pages/              # Páginas de la aplicación
+├── hooks/              # Custom hooks
+├── lib/                # Utilidades y configuraciones
+├── assets/             # Imágenes y recursos estáticos
+└── styles/             # Archivos de estilos
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Características
 
-## How can I deploy this project?
+- ✨ **Diseño Moderno**: Interfaz elegante con efectos visuales sutiles
+- 📱 **Responsive**: Optimizado para todos los dispositivos
+- ⚡ **Performance**: Carga rápida y optimizada
+- 🎨 **Animaciones**: Transiciones suaves y efectos visuales
+- 📧 **Contacto**: Formulario funcional de contacto
+- 🎵 **Temática Musical**: Diseño especializado para la industria musical
 
-Simply open [Lovable](https://lovable.dev/projects/1cb41c0b-753c-4ca6-ab3a-1d6665334f30) and click on Share -> Publish.
+## Contacto
 
-## Can I connect a custom domain to my Lovable project?
+- **Email**: info@skyflowproduction.com
+- **Proyectos**: proyectos@skyflowproduction.com
+- **Teléfono**: +57 301 456 7890
+- **Ubicación**: Zona Rosa, Bogotá, Colombia
 
-Yes, you can!
+## Licencia
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+© 2024 Skyflow Production. Todos los derechos reservados.
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+---
+
+**Desarrollado con ❤️ para la industria musical**

@@ -21,11 +21,11 @@ export const Hero = () => {
       <div className="relative z-10 text-center px-6 max-w-6xl">
         <div className="animate-fade-in">
           <h1 className="hero-title mb-6">
-            SKYFLOW STUDIOS
+            SKYFLOW PRODUCTION
           </h1>
           <p className="hero-subtitle mb-8 max-w-3xl mx-auto">
-            Producción musical de vanguardia y videos cinematográficos. 
-            Transformamos tu visión en experiencias sonoras y visuales únicas.
+            Estudio de producción musical y audiovisual de clase mundial. 
+            Creamos experiencias sonoras y visuales que conectan con tu audiencia y elevan tu arte al siguiente nivel.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button 

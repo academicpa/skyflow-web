@@ -10,10 +10,11 @@ export const Footer = () => {
             <div className="mb-4">
               <span className="text-3xl font-bold text-neon-cyan">SKY</span>
               <span className="text-3xl font-bold text-neon-purple">FLOW</span>
+              <span className="text-xl font-semibold text-muted-foreground ml-2">PRODUCTION</span>
             </div>
             <p className="text-muted-foreground max-w-md">
-              Estudio de producción musical y videos líder en Colombia. 
-              Transformamos ideas en experiencias audiovisuales extraordinarias.
+              Estudio de producción musical y audiovisual de clase mundial. 
+              Especializados en crear contenido que trasciende fronteras y conecta con audiencias globales.
             </p>
             <div className="flex space-x-4 mt-6">
               <a href="#" className="p-2 rounded-full bg-secondary hover:bg-neon-cyan/20 transition-colors">
@@ -48,14 +49,14 @@ export const Footer = () => {
             <ul className="space-y-2">
               <li className="text-muted-foreground">Zona Rosa, Bogotá</li>
               <li><a href="tel:+573014567890" className="text-muted-foreground hover:text-neon-cyan transition-colors">+57 301 456 7890</a></li>
-              <li><a href="mailto:info@skyflowstudios.com" className="text-muted-foreground hover:text-neon-cyan transition-colors">info@skyflowstudios.com</a></li>
+              <li><a href="mailto:info@skyflowproduction.com" className="text-muted-foreground hover:text-neon-cyan transition-colors">info@skyflowproduction.com</a></li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-border mt-8 pt-8 text-center">
           <p className="text-muted-foreground">
-            © 2024 Skyflow Studios. Todos los derechos reservados.
+            © 2024 Skyflow Production. Todos los derechos reservados.
           </p>
         </div>
       </div>

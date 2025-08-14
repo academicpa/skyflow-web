@@ -6,32 +6,32 @@ export const Services = () => {
     {
       icon: <Music className="w-8 h-8 text-neon-cyan" />,
       title: "Producción Musical",
-      description: "Composición, arreglos y producción completa de tus canciones con la más alta calidad."
+      description: "Composición, arreglos y producción integral con estándares internacionales. Desde la idea hasta el master final."
     },
     {
       icon: <Video className="w-8 h-8 text-neon-purple" />,
       title: "Videos Musicales",
-      description: "Conceptualización y producción de videos cinematográficos que complementan tu música."
+      description: "Narrativa visual cinematográfica que potencia tu música. Desde el concepto hasta la entrega final en 4K."
     },
     {
       icon: <Headphones className="w-8 h-8 text-neon-pink" />,
       title: "Mezcla & Masterización",
-      description: "Procesamiento profesional para lograr el sonido perfecto en cualquier plataforma."
+      description: "Procesamiento de audio con tecnología de vanguardia. Sonido competitivo para todas las plataformas digitales."
     },
     {
       icon: <Palette className="w-8 h-8 text-electric-blue" />,
       title: "Diseño Sonoro",
-      description: "Creación de paisajes sonoros únicos y efectos especiales para tus proyectos."
+      description: "Paisajes sonoros inmersivos y efectos especiales únicos que definen la identidad de tu proyecto."
     },
     {
       icon: <Mic className="w-8 h-8 text-gold" />,
       title: "Grabación",
-      description: "Estudios equipados con tecnología de punta para grabaciones de alta fidelidad."
+      description: "Estudios acústicamente tratados con equipos de gama alta. Capturamos cada detalle de tu interpretación."
     },
     {
       icon: <Camera className="w-8 h-8 text-neon-cyan" />,
       title: "Postproducción",
-      description: "Edición y efectos visuales profesionales para llevar tus videos al siguiente nivel."
+      description: "Edición avanzada, color grading y VFX. Transformamos material bruto en contenido de impacto visual."
     }
   ];
 

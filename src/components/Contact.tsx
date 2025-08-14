@@ -150,8 +150,8 @@ export const Contact = () => {
                   <h3 className="text-lg font-semibold text-foreground">Email</h3>
                 </div>
                 <p className="text-muted-foreground">
-                  info@skyflowstudios.com<br />
-                  proyectos@skyflowstudios.com
+                  info@skyflowproduction.com<br />
+                  proyectos@skyflowproduction.com
                 </p>
               </CardContent>
             </Card>
