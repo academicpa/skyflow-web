@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom utilities */
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
 /* Skyflow Studios Design System - Dark theme with neon accents */
 
 @layer base {
@@ -36,17 +44,60 @@
 
     --radius: 0.75rem;
 
-    /* Custom Skyflow Colors */
-    --neon-cyan: 180 100% 60%;
-    --neon-purple: 280 100% 65%;
-    --neon-pink: 320 100% 70%;
-    --electric-blue: 220 100% 70%;
-    --gold: 45 100% 60%;
+    /* Custom Skyflow Colors - Reduced saturation */
+    --neon-cyan: 180 70% 55%;
+    --neon-purple: 280 75% 60%;
+    --neon-pink: 320 70% 65%;
+    --electric-blue: 220 80% 65%;
+    --gold: 45 85% 55%;
     
     /* Gradients */
     --gradient-hero: linear-gradient(135deg, hsl(280 100% 40%), hsl(180 100% 40%));
     --gradient-card: linear-gradient(145deg, hsl(220 15% 12%), hsl(220 20% 18%));
     --gradient-accent: linear-gradient(90deg, hsl(280 100% 65%), hsl(180 100% 60%));
+  }
+
+  /* Light mode variables */
+  .light {
+    --background: 0 0% 98%;
+    --foreground: 220 20% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 15%;
+
+    --primary: 280 100% 50%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 220 10% 95%;
+    --secondary-foreground: 220 20% 15%;
+
+    --muted: 220 10% 92%;
+    --muted-foreground: 220 15% 40%;
+
+    --accent: 180 100% 45%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 80% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 220 15% 85%;
+    --input: 220 15% 90%;
+    --ring: 280 100% 50%;
+
+    /* Custom Skyflow Colors for light mode */
+    --neon-cyan: 180 70% 40%;
+    --neon-purple: 280 75% 45%;
+    --neon-pink: 320 70% 50%;
+    --electric-blue: 220 80% 50%;
+    --gold: 45 85% 45%;
+    
+    /* Light mode gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(280 100% 50%), hsl(180 100% 50%));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(220 10% 95%));
+    --gradient-accent: linear-gradient(90deg, hsl(280 100% 50%), hsl(180 100% 45%));
     
     /* Shadows */
     --shadow-neon: 0 0 20px hsl(var(--neon-cyan) / 0.3);
@@ -108,9 +159,9 @@
 
   /* Neon Button */
   .btn-neon {
-    @apply bg-transparent border-2 border-neon-cyan text-neon-cyan px-8 py-4 rounded-lg;
-    @apply hover:bg-neon-cyan hover:text-background transition-all duration-300;
-    @apply shadow-[0_0_20px_hsl(var(--neon-cyan)/0.3)] hover:shadow-[0_0_30px_hsl(var(--neon-cyan)/0.6)];
+    @apply bg-gradient-to-r from-neon-purple to-neon-cyan text-white px-8 py-4 rounded-lg font-semibold;
+    @apply hover:from-neon-cyan hover:to-neon-purple transition-all duration-300;
+    @apply shadow-[0_0_15px_hsl(var(--neon-cyan)/0.2)] hover:shadow-[0_0_25px_hsl(var(--neon-cyan)/0.4)];
   }
 
   /* Section Headers */
@@ -121,9 +172,9 @@
 
   /* Service Cards */
   .service-card {
-    @apply bg-card border border-border rounded-lg p-8;
-    @apply hover:border-neon-purple/50 transition-all duration-300;
-    @apply hover:shadow-[0_0_20px_hsl(var(--neon-purple)/0.2)];
+    @apply bg-card border border-border rounded-lg p-6;
+    @apply hover:border-neon-purple/30 transition-all duration-300;
+    @apply hover:shadow-[0_0_15px_hsl(var(--neon-purple)/0.15)];
   }
 
   /* Animated underline */
