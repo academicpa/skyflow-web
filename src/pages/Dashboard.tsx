@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import AutomationSystem from '@/components/AutomationSystem';
 import { 
   User, 
   Users,
@@ -33,7 +34,8 @@ import {
   Edit,
   Trash2,
   Menu,
-  X
+  X,
+  Workflow
 } from 'lucide-react';
 
 interface Task {
@@ -596,6 +598,7 @@ export const Dashboard = () => {
       case 'dashboard': return userRole === 'admin' ? 'Panel de Administración' : 'Mi Dashboard';
       case 'proyectos': return 'Proyectos';
       case 'clientes': return 'Gestión de Clientes';
+      case 'automatizacion': return 'Sistema de Automatización';
       case 'configuracion': return 'Configuración del Sistema';
       case 'membresia': return 'Mi Membresía';
       case 'notificaciones': return 'Notificaciones';
@@ -605,6 +608,9 @@ export const Dashboard = () => {
 
   const renderTabContent = () => {
     switch (activeTab) {
+      case 'automatizacion':
+        return <AutomationSystem />;
+        
       case 'dashboard':
         return (
           <div className="space-y-8">
@@ -1924,6 +1930,14 @@ export const Dashboard = () => {
                   }`}
                 >
                   Clientes
+                </button>
+                <button 
+                  onClick={() => handleTabChange('automatizacion')}
+                  className={`w-full text-left px-3 py-2 rounded-md transition-colors ${
+                    activeTab === 'automatizacion' ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-muted-foreground'
+                  }`}
+                >
+                  Automatización
                 </button>
                 <button 
                   onClick={() => handleTabChange('configuracion')}
