@@ -66,25 +66,51 @@ Si tu servidor FTP está montado como una unidad de red:
 - **NO subas archivos de configuración** como `package.json`, `vite.config.ts`, etc.
 - **NO subas la carpeta `dist/` en sí**, solo su contenido
 
-## 🔧 Configuración del Servidor
+## 🔧 Configuración del Servidor (.htaccess)
 
-### Archivo .htaccess (Para Apache)
-Si tu servidor usa Apache, crea un archivo `.htaccess` en la raíz con este contenido:
+**IMPORTANTE**: Para resolver las advertencias de seguridad de Chrome, usa esta configuración mejorada.
+
+Crea un archivo `.htaccess` en la raíz de tu dominio con el siguiente contenido:
 
 ```apache
+# Configuración de seguridad para Skyflow Studios
 RewriteEngine On
 RewriteBase /
 
-# Handle Angular and React Router
+# Forzar HTTPS (CRÍTICO para evitar advertencias de seguridad)
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Configuración para aplicaciones SPA
 RewriteRule ^index\.html$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . /index.html [L]
 
-# Security headers
-Header always set X-Content-Type-Options nosniff
-Header always set X-Frame-Options DENY
-Header always set X-XSS-Protection "1; mode=block"
+# Headers de seguridad estrictos
+<IfModule mod_headers.c>
+    # Forzar HTTPS por 1 año
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    
+    # Prevenir ataques XSS
+    Header always set X-XSS-Protection "1; mode=block"
+    
+    # Prevenir MIME type sniffing
+    Header always set X-Content-Type-Options "nosniff"
+    
+    # Prevenir clickjacking
+    Header always set X-Frame-Options "DENY"
+    
+    # Política de referrer
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Content Security Policy (CSP)
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; media-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self';"
+    
+    # Remover headers que revelan información del servidor
+    Header unset Server
+    Header unset X-Powered-By
+</IfModule>
 
 # Cache static assets
 <IfModule mod_expires.c>
@@ -96,15 +122,57 @@ Header always set X-XSS-Protection "1; mode=block"
     ExpiresByType image/jpeg "access plus 1 year"
     ExpiresByType image/gif "access plus 1 year"
     ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType video/mp4 "access plus 1 year"
 </IfModule>
+
+# Bloquear acceso a archivos sensibles
+<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|inc|bak|env)$">
+    Require all denied
+</FilesMatch>
 ```
+
+## 🛡️ Solución a Advertencias de Seguridad de Chrome
+
+Si Chrome muestra "Sitio peligroso" o advertencias de seguridad:
+
+### Causas Comunes:
+1. **SSL no configurado correctamente** - Verifica que tu certificado SSL esté activo
+2. **Contenido mixto HTTP/HTTPS** - El archivo .htaccess incluido fuerza HTTPS
+3. **Headers de seguridad faltantes** - La configuración incluye todos los headers necesarios
+4. **Configuración de servidor** - Asegúrate de que tu hosting soporte .htaccess
+
+### Pasos para Resolver:
+1. **Verifica SSL en SiteGround**:
+   - Ve a cPanel → SSL/TLS
+   - Asegúrate de que "Force HTTPS Redirect" esté activado
+   - Verifica que el certificado Let's Encrypt esté instalado y válido
+
+2. **Sube el archivo .htaccess**:
+   - El archivo ya está incluido en la carpeta `dist/`
+   - Asegúrate de que se suba a la raíz de tu dominio
+   - Verifica que los permisos sean 644
+
+3. **Limpia caché**:
+   - Limpia el caché de tu navegador
+   - Si usas Cloudflare, purga el caché
+   - En SiteGround, limpia el caché del servidor
+
+4. **Verifica configuración**:
+   - Usa herramientas como SSL Labs (ssllabs.com/ssltest/)
+   - Verifica headers de seguridad en securityheaders.com
+
+### Si el problema persiste:
+- Contacta al soporte de SiteGround
+- Verifica que no haya archivos maliciosos en tu servidor
+- Considera usar Cloudflare para seguridad adicional
 
 ## 🌐 Verificación
 Después de subir los archivos:
-1. Ve a tu dominio en el navegador
-2. Verifica que la página carga correctamente
+1. Ve a tu dominio en el navegador (usa HTTPS)
+2. Verifica que la página carga correctamente sin advertencias
 3. Prueba la navegación entre páginas
 4. Verifica que las imágenes y videos se muestran
+5. Comprueba que no hay errores de consola en DevTools
 
 ## 🔄 Actualizaciones Futuras
 Cada vez que hagas cambios:
