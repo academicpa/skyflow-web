@@ -13,39 +13,38 @@ export const Contact = () => {
         </p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
           <Card className="service-card animate-fade-in" style={{ animationDelay: '0.1s' }}>
-            <CardContent className="p-6">
+            <CardContent className="p-4">
               <div className="flex items-center mb-4">
                 <MapPin className="w-6 h-6 text-neon-cyan mr-3" />
                 <h3 className="text-lg font-semibold text-foreground">Ubicación</h3>
               </div>
-              <p className="text-muted-foreground">
-                Calle 85 #11-45<br />
-                Zona Rosa, Bogotá<br />
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                Carrera 3 # 14 - 19<br />
+                Anserma - Caldas<br />
                 Colombia
               </p>
             </CardContent>
           </Card>
 
           <Card className="service-card animate-fade-in" style={{ animationDelay: '0.2s' }}>
-            <CardContent className="p-6">
+            <CardContent className="p-4">
               <div className="flex items-center mb-4">
                 <Phone className="w-6 h-6 text-neon-purple mr-3" />
-                <h3 className="text-lg font-semibold text-foreground">Teléfono</h3>
+                <h3 className="text-lg font-semibold text-foreground">WhatsApp</h3>
               </div>
-              <p className="text-muted-foreground">
-                +57 301 456 7890<br />
-                +57 1 234 5678
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                +57 322 2051115
               </p>
             </CardContent>
           </Card>
 
           <Card className="service-card animate-fade-in" style={{ animationDelay: '0.3s' }}>
-            <CardContent className="p-6">
+            <CardContent className="p-4">
               <div className="flex items-center mb-4">
                 <Mail className="w-6 h-6 text-neon-pink mr-3" />
                 <h3 className="text-lg font-semibold text-foreground">Email</h3>
               </div>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground text-sm leading-relaxed break-words">
                 info@skyflowproduction.com<br />
                 proyectos@skyflowproduction.com
               </p>

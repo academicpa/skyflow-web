@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -7,13 +7,14 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { MapPin, Phone, Mail, Calculator, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 
 export const Quote = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -23,6 +24,15 @@ export const Quote = () => {
     timeline: '',
     message: ''
   });
+
+  useEffect(() => {
+    const serviceParam = searchParams.get('service');
+    if (serviceParam) {
+      setFormData(prev => ({ ...prev, service: serviceParam }));
+    }
+    // Scroll al inicio de la página cuando se carga el componente
+    window.scrollTo(0, 0);
+  }, [searchParams]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,14 +56,7 @@ export const Quote = () => {
       
       <section className="pt-24 pb-12 px-6 bg-gradient-to-br from-background via-secondary/20 to-background">
         <div className="container mx-auto text-center">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate('/')}
-            className="mb-8 text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Volver al inicio
-          </Button>
+
           <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-neon-cyan to-neon-purple bg-clip-text text-transparent">
             Cotiza tu proyecto
           </h1>
@@ -116,7 +119,7 @@ export const Quote = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="service" className="text-foreground">Servicio requerido *</Label>
-                      <Select onValueChange={(value) => setFormData({...formData, service: value})}>
+                      <Select value={formData.service} onValueChange={(value) => setFormData({...formData, service: value})}>
                         <SelectTrigger className="bg-input border-border focus:border-neon-cyan">
                           <SelectValue placeholder="Selecciona un servicio" />
                         </SelectTrigger>
@@ -183,41 +186,40 @@ export const Quote = () => {
             <h2 className="text-3xl font-bold text-center mb-12 bg-gradient-to-r from-neon-cyan to-neon-purple bg-clip-text text-transparent">
               Información de contacto
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-              <Card className="service-card animate-fade-in">
-                <CardContent className="p-6 text-center">
-                  <div className="flex justify-center mb-4">
-                    <MapPin className="w-8 h-8 text-neon-cyan" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+              <Card className="service-card animate-fade-in" style={{ animationDelay: '0.1s' }}>
+                <CardContent className="p-4">
+                  <div className="flex items-center mb-4">
+                    <MapPin className="w-6 h-6 text-neon-cyan mr-3" />
+                    <h3 className="text-lg font-semibold text-foreground">Ubicación</h3>
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">Ubicación</h3>
-                  <p className="text-muted-foreground">
-                    Calle 85 #11-45<br />
-                    Zona Rosa, Bogotá<br />
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    Carrera 3 # 14 - 19<br />
+                    Anserma - Caldas<br />
                     Colombia
                   </p>
                 </CardContent>
               </Card>
 
-              <Card className="service-card animate-fade-in">
-                <CardContent className="p-6 text-center">
-                  <div className="flex justify-center mb-4">
-                    <Phone className="w-8 h-8 text-neon-purple" />
+              <Card className="service-card animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                <CardContent className="p-4">
+                  <div className="flex items-center mb-4">
+                    <Phone className="w-6 h-6 text-neon-purple mr-3" />
+                    <h3 className="text-lg font-semibold text-foreground">WhatsApp</h3>
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">Teléfono</h3>
-                  <p className="text-muted-foreground">
-                    +57 301 456 7890<br />
-                    +57 1 234 5678
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    +57 322 2051115
                   </p>
                 </CardContent>
               </Card>
 
-              <Card className="service-card animate-fade-in">
-                <CardContent className="p-6 text-center">
-                  <div className="flex justify-center mb-4">
-                    <Mail className="w-8 h-8 text-neon-pink" />
+              <Card className="service-card animate-fade-in" style={{ animationDelay: '0.3s' }}>
+                <CardContent className="p-4">
+                  <div className="flex items-center mb-4">
+                    <Mail className="w-6 h-6 text-neon-pink mr-3" />
+                    <h3 className="text-lg font-semibold text-foreground">Email</h3>
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">Email</h3>
-                  <p className="text-muted-foreground">
+                  <p className="text-muted-foreground text-sm leading-relaxed break-words">
                     info@skyflowproduction.com<br />
                     proyectos@skyflowproduction.com
                   </p>

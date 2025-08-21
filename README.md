@@ -8,6 +8,15 @@ Sitio web oficial de **Skyflow Production**, estudio de producción musical y au
 
 ## 🆕 Nuevas Mejoras
 
+### 🎯 Sistema de Servicios Avanzado (Última Actualización)
+- **Selección en Dos Pasos**: Sistema intuitivo para fotografía con selección de plan y cantidad
+- **Mensajes WhatsApp Dinámicos**: Cotizaciones automáticas con detalles específicos del servicio
+- **Precios Dinámicos**: Actualización automática de precios según plan y cantidad seleccionada
+- **Persistencia de Selección**: La cantidad elegida se mantiene al cambiar entre planes
+- **Formato Profesional**: Mensajes estructurados con emojis y información detallada
+- **Servicios Incluidos/Excluidos**: Visualización clara de qué incluye cada plan
+- **Botones Inteligentes**: Habilitación condicional según selecciones del usuario
+
 ### Navegación en Español
 - URLs traducidas al español: `/servicios`, `/portafolio`, `/cotizar`
 - Navegación completamente localizada
@@ -29,12 +38,24 @@ Sitio web oficial de **Skyflow Production**, estudio de producción musical y au
 
 ## Servicios
 
-- **Producción Musical**: Composición, arreglos y producción integral con estándares internacionales
+### 📸 Sesión de Fotos (Sistema Avanzado)
+- **Planes Flexibles**: Básico, Intermedio y Premium con opciones personalizables
+- **Cantidades Variables**: 5, 10 o 20 fotografías según necesidades
+- **Precios Dinámicos**: Desde $30.000 hasta $400.000 según plan y cantidad
+- **Impresiones Incluidas**: Formatos 20×30, 30×40 y 50×70 según plan
+- **Descuentos Premium**: 20% de descuento en próxima sesión (Plan Premium)
+- **Cotización Automática**: Mensajes de WhatsApp preformateados con detalles específicos
+
+### 🎬 Producción Audiovisual
 - **Videos Musicales**: Narrativa visual cinematográfica desde el concepto hasta la entrega final en 4K
+- **Postproducción**: Edición avanzada, color grading y VFX
+- **Planes Escalables**: Básico, Intermedio y Premium con servicios diferenciados
+
+### 🎵 Producción Musical
+- **Composición**: Arreglos y producción integral con estándares internacionales
 - **Mezcla & Masterización**: Procesamiento de audio con tecnología de vanguardia
 - **Diseño Sonoro**: Paisajes sonoros inmersivos y efectos especiales únicos
 - **Grabación**: Estudios acústicamente tratados con equipos de gama alta
-- **Postproducción**: Edición avanzada, color grading y VFX
 
 ## Tecnologías Utilizadas
 

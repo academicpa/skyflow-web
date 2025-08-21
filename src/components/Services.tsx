@@ -1,28 +1,34 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Music, Video, Headphones, Palette, Mic, Camera } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export const Services = () => {
+  const navigate = useNavigate();
+  
   const services = [
     {
       icon: <Camera className="w-12 h-12 text-neon-cyan" />,
-      title: "Fotografía",
-      description: "Imágenes que cuentan tu historia. Desde retratos artísticos hasta sesiones comerciales que conectan con tu audiencia.",
-      image: "/collage.png",
-      examples: "Sesiones Fotográficas"
+      title: "Fotografía Profesional Creativa",
+      description: "Capturamos la esencia de tu marca con imágenes profesionales que conectan emocionalmente. Desde retratos artísticos hasta sesiones comerciales que elevan tu presencia visual y cuentan tu historia única.",
+      image: "/fotografia.png",
+      examples: "Sesiones Fotográficas",
+      serviceParam: "fotografia"
     },
     {
       icon: <Video className="w-12 h-12 text-neon-purple" />,
-      title: "Video",
-      description: "Videos que venden y emocionan. Clips musicales, comerciales y contenido publicitario que hace que tu marca destaque.",
-      image: "/collage.png",
-      examples: "Videos Musicales"
+      title: "Producción Audiovisual",
+      description: "Creamos contenido audiovisual que impacta y convierte. Videos musicales cinematográficos, comerciales publicitarios y contenido para redes sociales que hace que tu marca destaque en el mercado digital.",
+      image: "/video.png",
+      examples: "Videos Musicales",
+      serviceParam: "video"
     },
     {
       icon: <Music className="w-12 h-12 text-neon-pink" />,
-      title: "Producción Musical",
-      description: "Tu música como nunca antes. Grabación, mezcla y masterización que hace que suenes como los grandes.",
-      image: "/collage.png",
-      examples: "Producciones Musicales"
+      title: "Producción Musical Profesional",
+      description: "Transformamos tus ideas musicales en producciones profesionales de nivel internacional. Grabación, mezcla y masterización con la más alta calidad que hace que tu música suene como los grandes éxitos.",
+      image: "/produccion.png",
+      examples: "Producciones Musicales",
+      serviceParam: "produccion"
     }
   ];
 
@@ -36,14 +42,14 @@ export const Services = () => {
           {services.map((service, index) => (
             <Card 
               key={index} 
-              className="group overflow-hidden border-border hover:border-neon-cyan/50 transition-all duration-300 animate-fade-in hover:scale-105"
+              className="group overflow-hidden border-border hover:border-neon-cyan/50 transition-all duration-300 animate-fade-in hover:scale-102"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="relative overflow-hidden">
                 <img 
                   src={service.image} 
                   alt={service.examples}
-                  className="w-full h-80 object-cover transition-transform duration-300 group-hover:scale-105"
+                  className="w-full object-cover transition-transform duration-300 group-hover:scale-102"
                   style={{ aspectRatio: '9/16' }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
@@ -52,14 +58,14 @@ export const Services = () => {
                 </div>
               </div>
               
-              <CardContent className="p-6">
-                <CardTitle className="text-xl text-foreground mb-3">{service.title}</CardTitle>
-                <CardDescription className="text-muted-foreground mb-4 line-clamp-3">
+              <CardContent className="p-8">
+                <CardTitle className="text-xl text-foreground mb-4 leading-tight">{service.title}</CardTitle>
+                <CardDescription className="text-muted-foreground mb-6 text-sm leading-relaxed">
                   {service.description}
                 </CardDescription>
                 <button 
-                   onClick={() => window.location.href = '/cotizar'}
-                   className="w-full bg-gradient-to-r from-neon-cyan to-neon-purple text-white py-2 px-4 rounded-lg font-medium hover:opacity-90 transition-opacity"
+                   onClick={() => navigate(`/cotizar?service=${service.serviceParam}`)}
+                   className="w-full bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl"
                  >
                    Cotizar {service.title}
                  </button>

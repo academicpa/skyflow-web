@@ -4,10 +4,6 @@ import { Link } from 'react-router-dom';
 import heroImage from '@/assets/hero-studio.jpg';
 
 export const Hero = () => {
-  const scrollToServices = () => {
-    const element = document.getElementById('services');
-    element?.scrollIntoView({ behavior: 'smooth' });
-  };
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -30,19 +26,20 @@ export const Hero = () => {
             Tu proyecto merece verse y sonar profesional.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link to="/quote">
+            <Link to="/cotizar">
               <Button className="btn-neon animate-glow-pulse text-lg px-8 py-3">
                 Cotiza tu proyecto
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
-            <Button 
-              variant="outline" 
-              className="text-foreground border-2 border-neon-purple/50 hover:border-neon-purple hover:bg-neon-purple/10 px-8 py-3 text-lg font-semibold"
-              onClick={scrollToServices}
-            >
-              Ver qué hacemos
-            </Button>
+            <Link to="/portafolio">
+              <Button 
+                variant="outline" 
+                className="text-foreground border-2 border-neon-purple/50 hover:border-neon-purple hover:bg-neon-purple/10 hover:text-white px-8 py-3 text-lg font-semibold transition-all duration-300"
+              >
+                Ver qué hacemos
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

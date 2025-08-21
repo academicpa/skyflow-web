@@ -11,92 +11,47 @@ const PortfolioPage = () => {
   const portfolioItems = [
     {
       category: "Fotografía",
-      title: "Sesión Artística - Luna Roja",
-      client: "Artista Independiente",
-      date: "2024",
-      description: "Sesión fotográfica conceptual para el lanzamiento del EP 'Luna Roja'. Retratos artísticos que capturan la esencia melancólica y poética de la propuesta musical.",
-      image: "/collage.png",
+      title: "Recap Fotográfico - Momentos Únicos",
+      client: "Diversos Clientes",
+      date: "2025",
+      description: "Una recopilación de nuestros mejores trabajos fotográficos. Desde quinceañeras hasta retratos corporativos, capturamos los momentos más importantes de nuestros clientes.",
+      video: "/videos/Recap_fotos.mp4",
       details: [
-        "Concepto visual desarrollado en colaboración con la artista",
-        "Sesión en locación urbana y estudio",
-        "15 fotografías finales en alta resolución",
-        "Edición y retoque profesional",
-        "Entrega para uso en redes sociales y promoción"
+        "Fotografía de quinceañeras y celebraciones",
+        "Retratos corporativos y empresariales",
+        "Sesiones familiares y personales",
+        "Eventos especiales y sociales",
+        "Más de 500 proyectos completados exitosamente"
       ]
     },
     {
       category: "Video",
-      title: "Video Musical - 'Neon Dreams'",
-      client: "Banda Electrónica",
-      date: "2024",
-      description: "Video musical cinematográfico con estética cyberpunk. Narrativa visual que complementa la propuesta sonora electrónica de la banda.",
-      image: "/collage.png",
+      title: "Recap Audiovisual - Historias en Movimiento",
+      client: "Artistas y Empresas",
+      date: "2025",
+      description: "Compilación de nuestros proyectos audiovisuales más destacados. Desde videos musicales hasta contenido comercial, capturamos la esencia de cada cliente.",
+      video: "/videos/recap_marcas.mp4",
       details: [
-        "Preproducción completa: storyboard y planificación",
-        "Grabación en 4K con equipos profesionales",
-        "Efectos visuales y color grading avanzado",
-        "Postproducción de audio sincronizada",
-        "Entrega optimizada para YouTube y redes sociales"
+        "Videos musicales para artistas emergentes",
+        "Contenido comercial y publicitario",
+        "Grabaciones de eventos y shows en vivo",
+        "Documentales y entrevistas",
+        "Colaboraciones con comediantes y creadores de contenido"
       ]
     },
     {
       category: "Producción Musical",
-      title: "EP 'Midnight Sessions'",
-      client: "Proyecto Indie",
-      date: "2024",
-      description: "Producción completa de EP de 5 tracks. Grabación, mezcla y masterización de proyecto indie alternativo con sonidos orgánicos y electrónicos.",
-      image: "/collage.png",
+      title: "Recap Musical - El Arte de Crear Sonidos",
+      client: "Artistas Diversos",
+      date: "2025",
+      description: "Un vistazo al proceso creativo en nuestro estudio. Extractos de diferentes sesiones donde artistas dan vida a sus ideas musicales con nuestra guía profesional.",
+      video: "/videos/recap_musical.mp4",
       details: [
-        "Preproducción y arreglos musicales",
-        "Grabación en estudio acústicamente tratado",
-        "Mezcla analógica y digital híbrida",
-        "Masterización para streaming y vinilo",
-        "Distribución digital en todas las plataformas"
-      ]
-    },
-    {
-      category: "Fotografía",
-      title: "Campaña Comercial - Marca de Ropa",
-      client: "Fashion Brand",
-      date: "2024",
-      description: "Sesión fotográfica comercial para campaña de temporada. Fotografías de producto y lifestyle que reflejan la identidad de marca.",
-      image: "/collage.png",
-      details: [
-        "Desarrollo de concepto visual de marca",
-        "Sesión con modelos profesionales",
-        "Fotografía de producto en estudio",
-        "20 imágenes finales para campaña",
-        "Adaptación para diferentes formatos digitales"
-      ]
-    },
-    {
-      category: "Video",
-      title: "Documental Musical - 'Beats Underground'",
-      client: "Productora Cultural",
-      date: "2024",
-      description: "Documental de 30 minutos sobre la escena musical underground local. Entrevistas, performances en vivo y narrativa documental.",
-      image: "/collage.png",
-      details: [
-        "Investigación y desarrollo de narrativa",
-        "Grabación de entrevistas y performances",
-        "Edición documental con múltiples cámaras",
-        "Diseño sonoro y mezcla de audio",
-        "Entrega para festivales y plataformas digitales"
-      ]
-    },
-    {
-      category: "Producción Musical",
-      title: "Single 'Urban Pulse'",
-      client: "Artista Hip-Hop",
-      date: "2024",
-      description: "Producción de single hip-hop con elementos urbanos contemporáneos. Grabación de voces, producción de beats y masterización final.",
-      image: "/collage.png",
-      details: [
-        "Producción de instrumental original",
-        "Grabación de voces principales y coros",
-        "Mezcla con procesamiento vocal avanzado",
-        "Masterización para máximo impacto",
-        "Versiones instrumentales y acapella"
+        "Sesiones de composición y arreglos",
+        "Grabación con artistas de diversos géneros",
+        "Proceso de mezcla y masterización",
+        "Colaboraciones entre músicos locales",
+        "Desde la idea inicial hasta el producto final"
       ]
     }
   ];
@@ -110,14 +65,7 @@ const PortfolioPage = () => {
         {/* Hero Section */}
         <section className="py-20 px-6 bg-gradient-to-b from-background to-secondary/20">
           <div className="container mx-auto text-center">
-            <Button 
-              onClick={() => navigate('/')}
-              variant="ghost" 
-              className="mb-8 text-neon-cyan hover:text-neon-purple"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Volver al inicio
-            </Button>
+
             <h1 className="hero-title mb-6">
               Nuestro Portafolio
             </h1>
@@ -134,32 +82,36 @@ const PortfolioPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {portfolioItems.map((item, index) => (
                 <Card key={index} className="group overflow-hidden border-border hover:border-neon-cyan/50 transition-all duration-300">
-                  {/* Image */}
+                  {/* Video */}
                   <div className="relative overflow-hidden">
-                    <img 
-                      src={item.image} 
-                      alt={item.title}
-                      className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105"
+                    <video 
+                      src={item.video} 
+                      controls
+                      muted
+                      playsInline
+                      className="w-full h-96 object-contain transition-transform duration-300 group-hover:scale-105"
+                      style={{ aspectRatio: '9/16' }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
-                    <div className="absolute top-4 left-4">
+                  </div>
+                  
+                  {/* Category and Title - Moved outside video */}
+                  <div className="p-4 pb-2">
+                    <div className="flex items-center justify-between mb-2">
                       <span className="bg-neon-cyan/20 backdrop-blur-md text-neon-cyan text-xs font-medium px-3 py-1 rounded-full">
                         {item.category}
                       </span>
                     </div>
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <h3 className="text-lg font-semibold text-white mb-1">{item.title}</h3>
-                      <div className="flex items-center text-sm text-gray-300">
-                        <User className="w-3 h-3 mr-1" />
-                        <span className="mr-3">{item.client}</span>
-                        <Calendar className="w-3 h-3 mr-1" />
-                        <span>{item.date}</span>
-                      </div>
+                    <h3 className="text-lg font-semibold text-white mb-1">{item.title}</h3>
+                    <div className="flex items-center text-sm text-gray-300">
+                      <User className="w-3 h-3 mr-1" />
+                      <span className="mr-3">{item.client}</span>
+                      <Calendar className="w-3 h-3 mr-1" />
+                      <span>{item.date}</span>
                     </div>
                   </div>
 
                   {/* Content */}
-                  <div className="p-6">
+                  <div className="px-4 pb-6">
                     <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
                       {item.description}
                     </p>
@@ -178,7 +130,7 @@ const PortfolioPage = () => {
 
                     <Button 
                       variant="ghost" 
-                      className="w-full mt-4 text-neon-purple hover:text-neon-cyan text-sm"
+                      className="w-full mt-4 text-neon-cyan hover:text-white hover:bg-neon-cyan/20 border border-neon-cyan/30 text-sm"
                     >
                       Ver proyecto completo
                     </Button>
@@ -202,16 +154,9 @@ const PortfolioPage = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
                 className="btn-neon text-lg px-8 py-3"
-                onClick={() => navigate('/')}
+                onClick={() => navigate('/cotizar')}
               >
                 Iniciar mi proyecto
-              </Button>
-              <Button 
-                variant="ghost" 
-                className="text-foreground border border-border hover:border-neon-purple hover:bg-neon-purple/10"
-                onClick={() => navigate('/services')}
-              >
-                Ver servicios
               </Button>
             </div>
           </div>
