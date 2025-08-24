@@ -1,0 +1,272 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom utilities */
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+/* Skyflow Studios Design System - Dark theme with neon accents */
+
+@layer base {
+  :root {
+    --background: 220 20% 7%;
+    --foreground: 0 0% 95%;
+
+    --card: 220 15% 12%;
+    --card-foreground: 0 0% 90%;
+
+    --popover: 220 15% 12%;
+    --popover-foreground: 0 0% 90%;
+
+    --primary: 280 100% 65%;
+    --primary-foreground: 0 0% 10%;
+
+    --secondary: 220 15% 15%;
+    --secondary-foreground: 0 0% 85%;
+
+    --muted: 220 10% 20%;
+    --muted-foreground: 220 5% 60%;
+
+    --accent: 180 100% 60%;
+    --accent-foreground: 220 20% 10%;
+
+    --destructive: 0 80% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 220 15% 20%;
+    --input: 220 15% 15%;
+    --ring: 280 100% 65%;
+
+    --radius: 0.75rem;
+
+    /* Custom Skyflow Colors - Reduced saturation */
+    --neon-cyan: 180 70% 55%;
+    --neon-purple: 280 75% 60%;
+    --neon-pink: 320 70% 65%;
+    --electric-blue: 220 80% 65%;
+    --gold: 45 85% 55%;
+    
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(280 100% 40%), hsl(180 100% 40%));
+    --gradient-card: linear-gradient(145deg, hsl(220 15% 12%), hsl(220 20% 18%));
+    --gradient-accent: linear-gradient(90deg, hsl(280 100% 65%), hsl(180 100% 60%));
+  }
+
+  /* Light mode variables */
+  .light {
+    --background: 0 0% 98%;
+    --foreground: 220 20% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 15%;
+
+    --primary: 280 100% 50%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 220 10% 95%;
+    --secondary-foreground: 220 20% 15%;
+
+    --muted: 220 10% 92%;
+    --muted-foreground: 220 15% 40%;
+
+    --accent: 180 100% 45%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 80% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 220 15% 85%;
+    --input: 220 15% 90%;
+    --ring: 280 100% 50%;
+
+    /* Custom Skyflow Colors for light mode */
+    --neon-cyan: 180 70% 40%;
+    --neon-purple: 280 75% 45%;
+    --neon-pink: 320 70% 50%;
+    --electric-blue: 220 80% 50%;
+    --gold: 45 85% 45%;
+    
+    /* Light mode gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(280 100% 50%), hsl(180 100% 50%));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(220 10% 95%));
+    --gradient-accent: linear-gradient(90deg, hsl(280 100% 50%), hsl(180 100% 45%));
+    
+    /* Shadows */
+    --shadow-neon: 0 0 20px hsl(var(--neon-cyan) / 0.3);
+    --shadow-purple: 0 0 30px hsl(var(--neon-purple) / 0.4);
+    --shadow-card: 0 10px 30px hsl(220 20% 5% / 0.5);
+
+    /* Typography */
+    --font-display: 'Inter', sans-serif;
+    --font-body: 'Inter', sans-serif;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* Dark mode uses same colors since we're already dark-first */
+    --background: 220 25% 5%;
+    --foreground: 0 0% 98%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+@layer components {
+  /* Hero Section */
+  .hero-title {
+    @apply text-6xl md:text-8xl font-bold bg-gradient-to-r from-neon-cyan to-neon-purple bg-clip-text text-transparent;
+  }
+  
+  .hero-subtitle {
+    @apply text-xl md:text-2xl text-muted-foreground;
+  }
+
+  /* Neon Button */
+  .btn-neon {
+    @apply bg-gradient-to-r from-neon-purple to-neon-cyan text-white px-8 py-4 rounded-lg font-semibold;
+    @apply hover:from-neon-cyan hover:to-neon-purple transition-all duration-300;
+    @apply shadow-[0_0_15px_hsl(var(--neon-cyan)/0.2)] hover:shadow-[0_0_25px_hsl(var(--neon-cyan)/0.4)];
+  }
+
+  /* Section Headers */
+  .section-title {
+    @apply text-4xl md:text-5xl font-bold text-center mb-16;
+    @apply bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent;
+  }
+
+  /* Service Cards */
+  .service-card {
+    @apply bg-card border border-border rounded-lg p-6;
+    @apply hover:border-neon-purple/30 transition-all duration-300;
+    @apply hover:shadow-[0_0_15px_hsl(var(--neon-purple)/0.15)];
+  }
+
+  /* Animated underline */
+  .animated-link {
+    @apply relative after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5;
+    @apply after:bottom-0 after:left-0 after:bg-neon-cyan after:origin-bottom-right;
+    @apply after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left;
+  }
+
+  /* Glow effect */
+  .glow-purple {
+    box-shadow: 0 0 20px hsl(var(--neon-purple) / 0.4);
+  }
+
+  .glow-cyan {
+    box-shadow: 0 0 20px hsl(var(--neon-cyan) / 0.4);
+  }
+}
+
+@layer utilities {
+  .text-neon-cyan {
+    color: hsl(var(--neon-cyan));
+  }
+  
+  .text-neon-purple {
+    color: hsl(var(--neon-purple));
+  }
+  
+  .text-neon-pink {
+    color: hsl(var(--neon-pink));
+  }
+  
+  .text-electric-blue {
+    color: hsl(var(--electric-blue));
+  }
+  
+  .text-gold {
+    color: hsl(var(--gold));
+  }
+
+  .bg-gradient-hero {
+    background: var(--gradient-hero);
+  }
+  
+  .bg-gradient-card {
+    background: var(--gradient-card);
+  }
+  
+  .bg-gradient-accent {
+    background: var(--gradient-accent);
+  }
+
+  /* Polaroid card styles */
+  .polaroid-card {
+    cursor: pointer;
+  }
+  
+  .polaroid-card:hover {
+    z-index: 10;
+  }
+  
+  /* Fix para pantalla negra en móviles */
+  @media (max-width: 768px) {
+    /* Prevenir zoom en inputs en iOS */
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    textarea,
+    select {
+      font-size: 16px !important;
+      transform: translateZ(0);
+      -webkit-appearance: none;
+    }
+    
+    /* Asegurar que el viewport no se rompa */
+    body {
+      position: relative;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Fix para Select components en móviles */
+    [data-radix-select-content] {
+      position: fixed !important;
+      z-index: 9999 !important;
+      max-height: 50vh !important;
+    }
+    
+    /* Prevenir problemas de focus en móviles */
+    .focus\:border-neon-cyan:focus {
+      outline: none;
+      border-color: hsl(var(--neon-cyan)) !important;
+    }
+  }
+}
