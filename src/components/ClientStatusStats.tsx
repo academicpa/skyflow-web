@@ -40,13 +40,18 @@ interface ClientStatusStatsProps {
 const ClientStatusStats: React.FC<ClientStatusStatsProps> = ({ clients }) => {
   // Estadísticas por estado del cliente
   const clientsByStatus = {
-    por_visitar: clients.filter(client => client.membershipStatus === 'por_visitar' || client.client_status === 'por_visitar').length,
-    pendiente: clients.filter(client => client.membershipStatus === 'pendiente' || client.client_status === 'pendiente').length,
-    plan_confirmado: clients.filter(client => client.membershipStatus === 'plan_confirmado' || client.client_status === 'plan_confirmado').length,
-    en_proceso: clients.filter(client => client.membershipStatus === 'en_proceso' || client.client_status === 'en_proceso').length,
-    completado: clients.filter(client => client.membershipStatus === 'completado' || client.client_status === 'completado').length,
-    inactivo: clients.filter(client => client.membershipStatus === 'inactivo' || client.client_status === 'inactivo').length
+    por_visitar: clients.filter(client => client.client_status === 'por_visitar').length,
+    pendiente: clients.filter(client => client.client_status === 'pendiente').length,
+    plan_confirmado: clients.filter(client => client.client_status === 'plan_confirmado').length,
+    en_proceso: clients.filter(client => client.client_status === 'en_proceso').length,
+    completado: clients.filter(client => client.client_status === 'completado').length,
+    inactivo: clients.filter(client => client.client_status === 'inactivo').length
   };
+
+  // Debug: mostrar información de clientes para diagnóstico
+  console.log('ClientStatusStats - Total clients:', clients.length);
+  console.log('ClientStatusStats - Clients by status:', clientsByStatus);
+  console.log('ClientStatusStats - Sample client:', clients[0]);
 
 
 
