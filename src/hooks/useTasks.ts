@@ -4,12 +4,14 @@ import { useToast } from '@/hooks/use-toast';
 
 export interface Task {
   id: string;
-  project_id: string;
+  project_id?: string;
+  client_id?: string;
   title: string;
   description?: string;
-  status: 'pending' | 'in-progress' | 'completed';
+  status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
   assigned_to?: string;
   due_date?: string;
+  priority?: 'low' | 'medium' | 'high';
   created_at: string;
   updated_at: string;
 }
@@ -75,12 +77,57 @@ export const useTasks = () => {
 
   // Crear nueva tarea
   const addTask = async (taskData: {
-    project_id: string;
+    project_id?: string;
+    client_id?: string;
     title: string;
     description?: string;
-    status?: 'pending' | 'in-progress' | 'completed';
+    status?: 'pending' | 'in_progress' | 'completed' | 'cancelled';
     assigned_to?: string;
     due_date?: string;
+    priority?: 'low' | 'medium' | 'high';
+  }) => {
+    try {
+      const { data, error } = await supabase
+        .from('tasks')
+        .insert({
+          ...taskData,
+          status: taskData.status || 'pending'
+        })
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      setTasks(prev => [data, ...prev]);
+      toast({
+        title: 'Éxito',
+        description: 'Tarea creada correctamente'
+      });
+
+      return data;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
+      toast({
+        title: 'Error',
+        description: `No se pudo crear la tarea: ${errorMessage}`,
+        variant: 'destructive'
+      });
+      throw err;
+    }
+  };
+
+  // Alias para compatibilidad con PlanConfirmadoManager
+  const createTask = async (taskData: {
+    project_id?: string;
+    client_id?: string;
+    title: string;
+    description?: string;
+    status?: 'pending' | 'in_progress' | 'completed' | 'cancelled';
+    assigned_to?: string;
+    due_date?: string;
+    priority?: 'low' | 'medium' | 'high';
   }) => {
     try {
       const { data, error } = await supabase
@@ -181,6 +228,31 @@ export const useTasks = () => {
     return tasks.filter(task => task.project_id === projectId);
   };
 
+  // Obtener tareas por cliente
+  const getTasksByClient = async (clientId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('tasks')
+        .select('*')
+        .eq('client_id', clientId)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data || [];
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
+      toast({
+        title: 'Error',
+        description: `No se pudieron cargar las tareas del cliente: ${errorMessage}`,
+        variant: 'destructive'
+      });
+      return [];
+    }
+  };
+
   // Obtener estadísticas de tareas por proyecto
   const getTaskStats = (projectId: string) => {
     const projectTasks = getTasksByProject(projectId);
@@ -209,9 +281,11 @@ export const useTasks = () => {
     loadTasks,
     loadTasksByProject,
     addTask,
+    createTask,
     updateTask,
     deleteTask,
     getTasksByProject,
+    getTasksByClient,
     getTaskStats
   };
 };

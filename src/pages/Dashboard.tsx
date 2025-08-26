@@ -13,6 +13,10 @@ import { EditProjectModal } from '@/components/EditProjectModal';
 import { AddClientModal } from '@/components/AddClientModal';
 import { EditClientModal } from '@/components/EditClientModal';
 import { AddTaskModal } from '@/components/AddTaskModal';
+import ClientStatusStats from '@/components/ClientStatusStats';
+import ClientTaskManager from '@/components/ClientTaskManager';
+import PlanesManagement from '@/components/PlanesManagement';
+
 import { 
   User, 
   Users,
@@ -78,18 +82,59 @@ interface Client {
   name: string;
   email: string;
   phone: string;
-  address: string;
   company?: string;
-  totalSpent: string;
-  membershipPlan: string;
-  membershipStatus: 'active' | 'expired' | 'pending';
-  membershipExpiry: string;
-  joinDate: string;
-  lastPayment: string;
-  nextPaymentDue: string;
+  client_status: 'por_visitar' | 'pendiente' | 'plan_confirmado' | 'en_proceso' | 'completado' | 'inactivo';
+  membership_plan?: string;
+  membershipStatus: 'sin_plan' | 'pending' | 'active' | 'expired';
+  membershipExpiry?: string;
+  joinDate?: string;
+  lastPayment?: string;
+  nextPaymentDue?: string;
+  totalSpent?: string;
+  firstContactDate?: string;
+  planStartDate?: string;
+  notes?: string;
+  leadSource?: string;
+  assignedTo?: string;
 }
 
 export const Dashboard = () => {
+  // Función para obtener el texto a mostrar en el badge del cliente
+  const getClientDisplayText = (client: Client): string => {
+    if (client.client_status === 'plan_confirmado' && client.membership_plan) {
+      return client.membership_plan;
+    }
+    
+    // Mapear estados a texto legible
+    const statusLabels = {
+      'por_visitar': 'Por Visitar',
+      'pendiente': 'Pendiente',
+      'plan_confirmado': 'Plan Confirmado',
+      'en_proceso': 'En Proceso',
+      'completado': 'Completado',
+      'inactivo': 'Inactivo'
+    };
+    
+    return statusLabels[client.client_status] || client.client_status;
+  };
+
+  // Función para obtener el color del badge según el estado
+  const getClientStatusColor = (client: Client): string => {
+    if (client.client_status === 'plan_confirmado' && client.membership_plan) {
+      return 'bg-green-500/20 text-green-400 border-green-500/30';
+    }
+    
+    const statusColors = {
+      'por_visitar': 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+      'pendiente': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+      'plan_confirmado': 'bg-green-500/20 text-green-400 border-green-500/30',
+      'en_proceso': 'bg-purple-500/20 text-purple-400 border-purple-500/30',
+      'completado': 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+      'inactivo': 'bg-gray-500/20 text-gray-400 border-gray-500/30'
+    };
+    
+    return statusColors[client.client_status] || 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+  };
   const navigate = useNavigate();
   const { toast } = useToast();
   const [userRole, setUserRole] = useState<'admin' | 'client' | null>(null);
@@ -114,6 +159,7 @@ export const Dashboard = () => {
     }
   });
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [clientStatusFilter, setClientStatusFilter] = useState<'todos' | 'por_visitar' | 'pendiente' | 'plan_confirmado' | 'en_proceso' | 'completado' | 'inactivo'>('todos');
 
   const [openActionMenu, setOpenActionMenu] = useState<string | null>(null);
   const [showNewClientModal, setShowNewClientModal] = useState(false);
@@ -319,6 +365,14 @@ export const Dashboard = () => {
     localStorage.setItem('clientViewMode', newMode);
   };
 
+  // Función para filtrar clientes por estado
+  const getFilteredClients = () => {
+    if (clientStatusFilter === 'todos') {
+      return clients;
+    }
+    return clients.filter(client => client.client_status === clientStatusFilter);
+  };
+
   const handleClientClick = (client: Client) => {
     setSelectedClient(client);
   };
@@ -459,12 +513,36 @@ export const Dashboard = () => {
   const getFilteredStats = () => {
     const filteredProjects = getFilteredProjects();
     
-    return {
-      activeProjects: filteredProjects.filter(p => p.status === 'in-progress').length,
-      completedProjects: filteredProjects.filter(p => p.status === 'completed').length,
-      pendingProjects: filteredProjects.filter(p => p.status === 'pending').length,
-      totalClients: userRole === 'admin' ? clients.length : 1 // Para clientes, solo ellos mismos
-    };
+    if (userRole === 'admin') {
+      // Para admin: Pendientes = clientes sin plan asignado, Total Clientes = clientes con plan
+      const clientsWithoutPlan = clients.filter(c => 
+        c.client_status === 'por_visitar' || 
+        c.client_status === 'pendiente' || 
+        !c.membership_plan
+      ).length;
+      
+      const clientsWithPlan = clients.filter(c => 
+        c.membership_plan && 
+        c.client_status !== 'por_visitar' && 
+        c.client_status !== 'pendiente'
+      ).length;
+      
+      return {
+        activeProjects: filteredProjects.filter(p => p.status === 'in-progress').length,
+        completedProjects: filteredProjects.filter(p => p.status === 'completed').length,
+        pendingProjects: clientsWithoutPlan, // Clientes sin plan asignado
+        totalClients: clientsWithPlan, // Clientes con plan asignado
+        activeClients: clientsWithPlan // Para mostrar en el subtexto
+      };
+    } else {
+      // Para clientes: mantener lógica original de proyectos
+      return {
+        activeProjects: filteredProjects.filter(p => p.status === 'in-progress').length,
+        completedProjects: filteredProjects.filter(p => p.status === 'completed').length,
+        pendingProjects: filteredProjects.filter(p => p.status === 'pending').length,
+        totalClients: 1 // Para clientes, solo ellos mismos
+      };
+    }
   };
 
   // Obtener actividades filtradas según el rol del usuario
@@ -571,6 +649,7 @@ export const Dashboard = () => {
       case 'dashboard': return userRole === 'admin' ? 'Panel de Administración' : 'Mi Dashboard';
       case 'proyectos': return 'Proyectos';
       case 'clientes': return 'Gestión de Clientes';
+      case 'planes': return 'Gestión de Planes';
       case 'automatizacion': return 'Sistema de Automatización';
       case 'configuracion': return 'Configuración del Sistema';
       case 'membresia': return 'Mi Membresía';
@@ -610,12 +689,15 @@ export const Dashboard = () => {
                   <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
                     <h3 className="font-semibold text-yellow-500 mb-2">{userRole === 'admin' ? 'Pendientes' : 'Mis Pendientes'}</h3>
                     <p className="text-2xl font-bold text-foreground">{getFilteredStats().pendingProjects}</p>
+                    {userRole === 'admin' && (
+                      <p className="text-xs text-muted-foreground mt-1">Clientes sin plan</p>
+                    )}
                   </div>
                   {userRole === 'admin' ? (
                     <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
                       <h3 className="font-semibold text-green-500 mb-2">Total Clientes</h3>
-                      <p className="text-2xl font-bold text-foreground">{clients.length}</p>
-                      <p className="text-xs text-muted-foreground mt-1">{clients.filter(c => c.membershipStatus === 'active').length} activos</p>
+                      <p className="text-2xl font-bold text-foreground">{getFilteredStats().totalClients}</p>
+                      <p className="text-xs text-muted-foreground mt-1">{getFilteredStats().activeClients || getFilteredStats().totalClients} activos</p>
                     </div>
                   ) : (
                     <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
@@ -630,6 +712,8 @@ export const Dashboard = () => {
                 </div>
               </CardContent>
             </Card>
+            
+
             
             {/* Sección inferior con dos tarjetas lado a lado */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8">
@@ -1280,8 +1364,8 @@ export const Dashboard = () => {
                 </div>
               </div>
               
-
-              
+              {/* Gestión de Tareas del Cliente */}
+              <ClientTaskManager clientId={selectedClient.id} />
 
             </div>
           );
@@ -1300,7 +1384,24 @@ export const Dashboard = () => {
                   Nuevo Cliente
                 </Button>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3">
+                {/* Filtro por estado */}
+                <div className="flex items-center space-x-2">
+                  <Filter className="w-4 h-4 text-muted-foreground" />
+                  <select
+                    value={clientStatusFilter}
+                    onChange={(e) => setClientStatusFilter(e.target.value as typeof clientStatusFilter)}
+                    className="bg-background border border-border rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-neon-cyan/50"
+                  >
+                    <option value="todos">Todos los estados</option>
+                    <option value="por_visitar">Por Visitar</option>
+                    <option value="pendiente">Pendiente</option>
+                    <option value="plan_confirmado">Plan Confirmado</option>
+                    <option value="en_proceso">En Proceso</option>
+                    <option value="completado">Completado</option>
+                    <option value="inactivo">Inactivo</option>
+                  </select>
+                </div>
                 <Button
                   variant="outline"
                   size="sm"
@@ -1316,14 +1417,17 @@ export const Dashboard = () => {
               </div>
             </div>
             
+            {/* Estadísticas de Estados de Clientes */}
+            <ClientStatusStats clients={clients} />
+            
             <Card className="service-card">
               <CardContent className="p-6">
-                {clients.length > 0 ? (
+                {getFilteredClients().length > 0 ? (
                   <div className={clientViewMode === 'grid' ? 
                     "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" : 
                     "space-y-4"
                   }>
-                    {clients.map((client) => (
+                    {getFilteredClients().map((client) => (
                     <div 
                       key={client.id} 
                       className={`p-4 border border-border rounded-lg hover:border-neon-cyan/50 transition-colors group ${
@@ -1346,8 +1450,8 @@ export const Dashboard = () => {
                               </div>
                             </div>
                             <div className="absolute top-2 right-2">
-                              <Badge className={getMembershipStatusColor(client.membershipStatus)}>
-                                {client.membershipPlan}
+                              <Badge className={getClientStatusColor(client)}>
+                                {getClientDisplayText(client)}
                               </Badge>
                             </div>
                           </div>
@@ -1435,8 +1539,8 @@ export const Dashboard = () => {
                               )}
                             </div>
                             <div className="flex justify-start pt-0">
-                               <Badge className={getMembershipStatusColor(client.membershipStatus)}>
-                                 {client.membershipPlan}
+                               <Badge className={getClientStatusColor(client)}>
+                                 {getClientDisplayText(client)}
                                </Badge>
                              </div>
                           </div>
@@ -1934,6 +2038,9 @@ export const Dashboard = () => {
           </div>
         );
       
+      case 'planes':
+        return <PlanesManagement />;
+      
       default:
         return <div>Contenido no encontrado</div>;
     }
@@ -2000,6 +2107,14 @@ export const Dashboard = () => {
                   }`}
                 >
                   Clientes
+                </button>
+                <button 
+                  onClick={() => handleTabChange('planes')}
+                  className={`w-full text-left px-3 py-2 rounded-md transition-colors ${
+                    activeTab === 'planes' ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-muted-foreground'
+                  }`}
+                >
+                  Planes
                 </button>
                 <button 
                   disabled
@@ -2145,6 +2260,6 @@ export const Dashboard = () => {
       />
     </div>
   );
-};
+}
 
 export default Dashboard;

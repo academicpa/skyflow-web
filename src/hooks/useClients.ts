@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getClients, createClientRecord, updateClient, deleteClient } from '@/lib/supabase';
+import { getClients, createClientRecord, updateClient, deleteClient, getProjects, getPlanes } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 
 export interface Client {
@@ -8,19 +8,46 @@ export interface Client {
   email: string;
   phone?: string;
   company?: string;
-  address?: string;
-  created_at: string;
-  updated_at: string;
-  // Campos adicionales para compatibilidad con el Dashboard actual
-  projectCount?: number;
-  totalSpent?: string;
-  membershipPlan?: string;
-  membershipStatus?: 'active' | 'expired' | 'pending';
+  client_status: 'por_visitar' | 'pendiente' | 'plan_confirmado' | 'en_proceso' | 'completado' | 'inactivo';
+  membership_plan?: string;
+  membershipStatus: 'sin_plan' | 'pending' | 'active' | 'expired';
   membershipExpiry?: string;
   joinDate?: string;
   lastPayment?: string;
   nextPaymentDue?: string;
-  projectIds?: string[];
+  totalSpent?: number;
+  firstContactDate?: string;
+  planStartDate?: string;
+  notes?: string;
+  leadSource?: string;
+  assignedTo?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ClientTask {
+  id: string;
+  clientId: string;
+  taskName: string;
+  taskDescription?: string;
+  taskType: 'follow_up' | 'payment_reminder' | 'contract_send' | 'project_start' | 'delivery' | 'feedback';
+  dueDate?: string;
+  completed: boolean;
+  completedAt?: string;
+  assignedTo?: string;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ClientStatusHistory {
+  id: string;
+  clientId: string;
+  previousStatus?: string;
+  newStatus: string;
+  changedBy?: string;
+  changeReason?: string;
+  created_at: string;
 }
 
 export const useClients = () => {
@@ -29,29 +56,66 @@ export const useClients = () => {
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
+  // Función para calcular el valor total del cliente basado en el precio del plan × cantidad de proyectos
+  const calculateClientTotalSpent = (client: any, projects: any[], plans: any[]) => {
+    // Obtener el plan del cliente
+    const clientPlan = plans.find(plan => plan.name === client.membership_plan);
+    if (!clientPlan) {
+      return 0; // Si no tiene plan o el plan no existe, retorna 0
+    }
+    
+    // Contar proyectos del cliente
+    const clientProjects = projects.filter(project => project.client_id === client.id);
+    const projectCount = clientProjects.length;
+    
+    // Calcular: precio del plan × cantidad de proyectos
+    return clientPlan.price * projectCount;
+  };
+
   // Cargar clientes
   const loadClients = async () => {
     try {
       setLoading(true);
-      const { data, error } = await getClients();
+      const [clientsResult, projectsResult, planesResult] = await Promise.all([
+        getClients(),
+        getProjects(),
+        getPlanes()
+      ]);
 
-      if (error) {
-        throw new Error(error.message);
+      if (clientsResult.error) {
+        throw new Error(clientsResult.error.message);
       }
 
+      if (projectsResult.error) {
+        throw new Error(projectsResult.error.message);
+      }
+
+      if (planesResult.error) {
+        throw new Error(planesResult.error.message);
+      }
+
+      const projects = projectsResult.data || [];
+      const plans = planesResult.data || [];
+
       // Transformar datos para compatibilidad con el Dashboard
-      const transformedClients = (data || []).map((client: any) => ({
-        ...client,
-        projectCount: 0, // Se calculará después con los proyectos
-        totalSpent: client.total_spent ? `$${client.total_spent}` : '$0',
-        membershipPlan: client.membership_plan || 'Básico',
-        membershipStatus: client.membership_status || 'active' as const,
-        membershipExpiry: client.membership_expiry || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        joinDate: client.join_date || client.created_at?.split('T')[0] || '',
-        lastPayment: client.last_payment || '',
-        nextPaymentDue: client.next_payment_due || '',
-        projectIds: []
-      }));
+      const transformedClients = (clientsResult.data || []).map((client: any) => {
+        const totalSpent = calculateClientTotalSpent(client, projects, plans);
+        const projectCount = projects.filter(p => p.client_id === client.id).length;
+        
+        return {
+          ...client,
+          projectCount,
+          totalSpent: totalSpent > 0 ? `$${totalSpent.toLocaleString()}` : '$0',
+          membershipPlan: client.membership_plan || 'Básico',
+          membershipStatus: client.client_status || 'por_visitar' as const,
+          membershipExpiry: client.membership_expiry || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          joinDate: client.join_date || client.created_at?.split('T')[0] || '',
+          firstContactDate: client.first_contact_date || client.created_at?.split('T')[0] || '',
+          lastPayment: client.last_payment || '',
+          nextPaymentDue: client.next_payment_due || '',
+          projectIds: projects.filter(p => p.client_id === client.id).map(p => p.id)
+        };
+      });
 
       setClients(transformedClients);
       setError(null);
@@ -69,16 +133,13 @@ export const useClients = () => {
   };
 
   // Crear nuevo cliente
-  const addClient = async (clientData: {
-    name: string;
-    email: string;
-    phone?: string;
-    company?: string;
-    address?: string;
-    membership_plan?: string;
-  }) => {
+  const addClient = async (clientData: Omit<Client, 'id' | 'created_at' | 'updated_at'>) => {
     try {
-      const { data, error } = await createClientRecord(clientData);
+      const { data, error } = await createClientRecord({
+        ...clientData,
+        client_status: clientData.client_status || 'por_visitar',
+        first_contact_date: clientData.first_contact_date || new Date().toISOString().split('T')[0]
+      });
 
       if (error) {
         throw new Error(error.message);
@@ -174,6 +235,42 @@ export const useClients = () => {
     loadClients();
   }, []);
 
+  // Las tareas de clientes ahora se manejan a través de la tabla 'tasks' vinculada a proyectos
+  // Ver useTasks.ts para la gestión de tareas
+
+  const updateClientStatus = async (clientId: string, newStatus: Client['client_status'], reason?: string) => {
+    try {
+      const { data, error } = await updateClient(clientId, { 
+        client_status: newStatus
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      toast({
+        title: 'Éxito',
+        description: 'Estado del cliente actualizado correctamente'
+      });
+
+      // Recargar clientes para asegurar sincronización con la base de datos
+      await loadClients();
+      return { success: true, data };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+      toast({
+        title: 'Error',
+        description: `No se pudo actualizar el estado: ${errorMessage}`,
+        variant: 'destructive'
+      });
+      return { success: false, error: errorMessage };
+    }
+  };
+
+
+
+
+
   return {
     clients,
     loading,
@@ -183,6 +280,7 @@ export const useClients = () => {
     updateClient: updateClientData,
     removeClient,
     getClientById,
-    getClientByEmail
+    getClientByEmail,
+    updateClientStatus
   };
 };

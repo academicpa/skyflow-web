@@ -40,6 +40,12 @@ export interface Client {
   company?: string
   address?: string
   membership_plan?: string
+  client_status?: 'por_visitar' | 'pendiente' | 'plan_confirmado' | 'en_proceso' | 'completado' | 'inactivo'
+  confirmed_plan?: string
+  first_contact_date?: string
+  notes?: string
+  lead_source?: string
+  assigned_to?: string
   created_at: string
   updated_at: string
 }
@@ -52,6 +58,17 @@ export interface Task {
   status: 'pending' | 'in-progress' | 'completed'
   assigned_to?: string
   due_date?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface Plan {
+  id: string
+  name: string
+  description: string
+  price: number
+  features?: any
+  is_active?: boolean
   created_at: string
   updated_at: string
 }
@@ -214,6 +231,46 @@ export const updateTask = async (id: string, updates: Partial<Task>) => {
 export const deleteTask = async (id: string) => {
   const { error } = await supabase
     .from('tasks')
+    .delete()
+    .eq('id', id)
+  
+  return { error }
+}
+
+// Funciones para planes
+export const getPlanes = async () => {
+  const { data, error } = await supabase
+    .from('planes')
+    .select('*')
+    .eq('is_active', true)
+    .order('name', { ascending: true })
+  
+  return { data, error }
+}
+
+export const createPlan = async (plan: Omit<Plan, 'id' | 'created_at' | 'updated_at'>) => {
+  const { data, error } = await supabase
+    .from('planes')
+    .insert([plan])
+    .select()
+    .single()
+  
+  return { data, error }
+}
+
+export const updatePlan = async (id: string, updates: Partial<Plan>) => {
+  const { data, error } = await supabase
+    .from('planes')
+    .update(updates)
+    .eq('id', id)
+    .select()
+  
+  return { data, error }
+}
+
+export const deletePlan = async (id: string) => {
+  const { error } = await supabase
+    .from('planes')
     .delete()
     .eq('id', id)
   

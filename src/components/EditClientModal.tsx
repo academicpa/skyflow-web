@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { X } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { X, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useClients } from '@/hooks/useClients';
+import { supabase } from '@/lib/supabase';
 
 interface Client {
   id: string;
@@ -12,7 +16,18 @@ interface Client {
   phone: string;
   company?: string;
   address: string;
+  client_status?: string;
   membership_plan?: string;
+  notes?: string;
+  firstContactDate?: string;
+  join_date?: string;
+}
+
+interface Plan {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
 }
 
 interface EditClientModalProps {
@@ -25,38 +40,65 @@ interface EditClientModalProps {
 export const EditClientModal: React.FC<EditClientModalProps> = ({ isOpen, onClose, client, onClientUpdated }) => {
   const { toast } = useToast();
   const { updateClient } = useClients();
+  const [planes, setPlanes] = useState<Plan[]>([]);
+  const [loadingPlanes, setLoadingPlanes] = useState(false);
   
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     company: '',
-    address: '',
-    membership_plan: 'Básico'
+    client_status: 'por_visitar' as const,
+    membership_plan: '',
+    notes: '',
+    join_date: ''
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Cargar planes desde la base de datos
+  const loadPlanes = async () => {
+    try {
+      setLoadingPlanes(true);
+      const { data, error } = await supabase
+        .from('planes')
+        .select('*')
+        .order('name', { ascending: true });
+
+      if (error) throw error;
+      setPlanes(data || []);
+    } catch (error) {
+      console.error('Error al cargar planes:', error);
+    } finally {
+      setLoadingPlanes(false);
+    }
+  };
+
+  // Cargar planes cuando se abre el modal
+  useEffect(() => {
+    if (isOpen) {
+      loadPlanes();
+    }
+  }, [isOpen]);
 
   // Cargar datos del cliente cuando se abre el modal
   useEffect(() => {
     if (client && isOpen) {
       setFormData({
-        name: client.name || '',
-        email: client.email || '',
-        phone: client.phone || '',
-        company: client.company || '',
-        address: client.address || '',
-        membership_plan: client.membership_plan || 'Básico'
-      });
+           name: client.name || '',
+           email: client.email || '',
+           phone: client.phone || '',
+           company: client.company || '',
+           client_status: client.client_status || 'por_visitar',
+           membership_plan: client.membership_plan || '',
+           notes: client.notes || '',
+           join_date: client.join_date || ''
+         });
     }
   }, [client, isOpen]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -77,27 +119,37 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({ isOpen, onClos
 
     try {
       const clientData = {
-        name: formData.name.trim(),
-        email: formData.email.trim(),
-        phone: formData.phone.trim(),
-        company: formData.company.trim(),
-        address: formData.address.trim(),
-        membership_plan: formData.membership_plan
-      };
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim() || undefined,
+          company: formData.company.trim() || undefined,
+          client_status: formData.client_status,
+          membership_plan: formData.membership_plan || null,
+          notes: formData.notes.trim() || undefined,
+          join_date: formData.join_date
+        };
 
-      await updateClient(client.id, clientData);
+      console.log('Datos a actualizar:', clientData);
+      console.log('ID del cliente:', client.id);
       
-      toast({
-        title: "Cliente actualizado",
-        description: `${clientData.name} ha sido actualizado exitosamente.`,
-      });
+      const result = await updateClient(client.id, clientData);
+      console.log('Resultado de la actualización:', result);
       
-      // Llamar callback para actualizar la lista en el Dashboard
-      if (onClientUpdated) {
-        onClientUpdated();
+      if (result.success) {
+        toast({
+          title: "Cliente actualizado",
+          description: `${clientData.name} ha sido actualizado exitosamente.`,
+        });
+        
+        // Llamar callback para actualizar la lista en el Dashboard
+        if (onClientUpdated) {
+          onClientUpdated();
+        }
+        
+        onClose();
+      } else {
+        throw new Error(result.error || 'Error desconocido');
       }
-      
-      onClose();
     } catch (error) {
       console.error('Error al actualizar cliente:', error);
       toast({
@@ -114,7 +166,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({ isOpen, onClos
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-md bg-background border-border">
+      <Card className="w-full max-w-2xl bg-background border-border max-h-[95vh] overflow-y-auto">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <CardTitle className="text-xl font-semibold">Editar Cliente</CardTitle>
           <Button
@@ -131,33 +183,24 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({ isOpen, onClos
             {/* Primera fila - Campos obligatorios */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium mb-2">
-                  Nombre completo *
-                </label>
-                <input
-                  type="text"
+                <Label htmlFor="name">Nombre Completo *</Label>
+                <Input
                   id="name"
-                  name="name"
                   value={formData.name}
-                  onChange={handleInputChange}
-                  className="w-full p-3 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-neon-cyan"
-                  placeholder="Ingresa el nombre completo"
+                  onChange={(e) => handleInputChange('name', e.target.value)}
+                  placeholder="Ej: Juan Pérez"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-2">
-                  Email *
-                </label>
-                <input
-                  type="email"
+                <Label htmlFor="email">Email *</Label>
+                <Input
                   id="email"
-                  name="email"
+                  type="email"
                   value={formData.email}
-                  onChange={handleInputChange}
-                  className="w-full p-3 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-neon-cyan"
-                  placeholder="ejemplo@correo.com"
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  placeholder="juan@ejemplo.com"
                   required
                 />
               </div>
@@ -166,71 +209,96 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({ isOpen, onClos
             {/* Segunda fila - Campos opcionales */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium mb-2">
-                  WhatsApp / Teléfono
-                </label>
-                <input
-                  type="tel"
+                <Label htmlFor="phone">WhatsApp / Teléfono</Label>
+                <Input
                   id="phone"
-                  name="phone"
+                  type="tel"
                   value={formData.phone}
-                  onChange={handleInputChange}
-                  className="w-full p-3 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-neon-cyan"
-                  placeholder="+1234567890"
+                  onChange={(e) => handleInputChange('phone', e.target.value)}
+                  placeholder="+1 234 567 8900"
                 />
               </div>
 
               <div>
-                <label htmlFor="company" className="block text-sm font-medium mb-2">
-                  Empresa
-                </label>
-                <input
-                  type="text"
+                <Label htmlFor="company">Empresa</Label>
+                <Input
                   id="company"
-                  name="company"
                   value={formData.company}
-                  onChange={handleInputChange}
-                  className="w-full p-3 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-neon-cyan"
+                  onChange={(e) => handleInputChange('company', e.target.value)}
                   placeholder="Nombre de la empresa"
                 />
               </div>
             </div>
 
-            {/* Tercera fila - Dirección completa */}
+            {/* Tercera fila - Estado del Cliente y Plan de Membresía */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="client_status">Estado del Cliente</Label>
+                <select
+                  id="client_status"
+                  value={formData.client_status}
+                  onChange={(e) => handleInputChange('client_status', e.target.value)}
+                  className="w-full p-3 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-neon-cyan"
+                >
+                  <option value="por_visitar">Por Visitar</option>
+                  <option value="pendiente">Pendiente</option>
+                  <option value="plan_confirmado">Plan Confirmado</option>
+                  <option value="en_proceso">En Proceso</option>
+                  <option value="completado">Completado</option>
+                  <option value="inactivo">Inactivo</option>
+                </select>
+              </div>
+              
+              <div>
+                <Label htmlFor="membership_plan">Plan de Membresía</Label>
+                <select
+                  id="membership_plan"
+                  value={formData.membership_plan}
+                  onChange={(e) => handleInputChange('membership_plan', e.target.value)}
+                  className="w-full p-3 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-neon-cyan"
+                  disabled={formData.client_status !== 'plan_confirmado' && formData.client_status !== 'en_proceso' && formData.client_status !== 'completado'}
+                >
+                  <option value="">Seleccionar plan...</option>
+                  {loadingPlanes ? (
+                    <option value="">Cargando planes...</option>
+                  ) : (
+                    planes.map((plan) => (
+                      <option key={plan.id} value={plan.name}>
+                        {plan.name} - ${plan.price}
+                      </option>
+                    ))
+                  )}
+                </select>
+              </div>
+            </div>
+
+            {/* Cuarta fila - Fecha de contacto */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="join_date">Fecha de Primer Contacto</Label>
+                <Input
+                  id="join_date"
+                  type="date"
+                  value={formData.join_date}
+                  onChange={(e) => handleInputChange('join_date', e.target.value)}
+                />
+              </div>
+              <div></div>
+            </div>
+
+            {/* Quinta fila - Notas */}
             <div>
-              <label htmlFor="address" className="block text-sm font-medium mb-2">
-                Dirección
-              </label>
-              <textarea
-                id="address"
-                name="address"
-                value={formData.address}
-                onChange={handleInputChange}
-                rows={2}
-                className="w-full p-3 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-neon-cyan resize-none"
-                placeholder="Dirección completa"
+              <Label htmlFor="notes">Notas (Opcional)</Label>
+              <Textarea
+                id="notes"
+                value={formData.notes}
+                onChange={(e) => handleInputChange('notes', e.target.value)}
+                placeholder="Notas adicionales sobre el cliente..."
+                rows={3}
               />
             </div>
 
-            {/* Cuarta fila - Plan de membresía */}
-            <div>
-              <label htmlFor="membership_plan" className="block text-sm font-medium mb-2">
-                Plan de Membresía
-              </label>
-              <select
-                id="membership_plan"
-                name="membership_plan"
-                value={formData.membership_plan}
-                onChange={handleInputChange}
-                className="w-full p-3 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-neon-cyan"
-              >
-                <option value="Básico">Básico</option>
-                <option value="Premium">Premium</option>
-                <option value="Enterprise">Enterprise</option>
-              </select>
-            </div>
-
-            <div className="flex space-x-3 pt-4">
+            <div className="flex gap-2 pt-4">
               <Button
                 type="button"
                 variant="outline"
@@ -242,10 +310,17 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({ isOpen, onClos
               </Button>
               <Button
                 type="submit"
-                className="flex-1 btn-neon"
-                disabled={isSubmitting}
+                className="flex-1"
+                disabled={isSubmitting || !formData.name.trim() || !formData.email.trim()}
               >
-                {isSubmitting ? 'Actualizando...' : 'Actualizar Cliente'}
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Actualizando...
+                  </>
+                ) : (
+                  'Actualizar Cliente'
+                )}
               </Button>
             </div>
           </form>
