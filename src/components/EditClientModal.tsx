@@ -97,8 +97,31 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({ isOpen, onClos
     }
   }, [client, isOpen]);
 
+  const formatPhoneNumber = (value: string) => {
+    // Remover todos los caracteres que no sean dígitos
+    const digitsOnly = value.replace(/\D/g, '');
+    
+    // Si tiene exactamente 10 dígitos y no empieza con +57, agregar +57
+    if (digitsOnly.length === 10 && !value.startsWith('+57')) {
+      return `+57 ${digitsOnly}`;
+    }
+    
+    // Si ya tiene +57, mantener el formato
+    if (value.startsWith('+57')) {
+      return value;
+    }
+    
+    // Para otros casos, devolver el valor original
+    return value;
+  };
+
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    if (field === 'phone') {
+      const formattedPhone = formatPhoneNumber(value);
+      setFormData(prev => ({ ...prev, [field]: formattedPhone }));
+    } else {
+      setFormData(prev => ({ ...prev, [field]: value }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -215,7 +238,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({ isOpen, onClos
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
-                  placeholder="+1 234 567 8900"
+                  placeholder="3001234567 (se agregará +57 automáticamente)"
                 />
               </div>
 

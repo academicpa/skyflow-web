@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getClients, createClientRecord, updateClient, deleteClient, getProjects, getPlanes } from '@/lib/supabase';
-import { useToast } from '@/hooks/use-toast';
+import { useBeautifulToast } from '@/hooks/use-beautiful-toast';
 
 export interface Client {
   id: string;
@@ -54,7 +54,7 @@ export const useClients = () => {
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { toast } = useToast();
+  const { showError, showSuccess } = useBeautifulToast();
 
   // Función para calcular el valor total del cliente basado en el precio del plan × cantidad de proyectos
   const calculateClientTotalSpent = (client: any, projects: any[], plans: any[]) => {
@@ -122,10 +122,9 @@ export const useClients = () => {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
       setError(errorMessage);
-      toast({
-        title: 'Error',
-        description: `No se pudieron cargar los clientes: ${errorMessage}`,
-        variant: 'destructive'
+      showError({
+        title: 'Error al cargar clientes',
+        description: `No se pudieron cargar los clientes: ${errorMessage}`
       });
     } finally {
       setLoading(false);
@@ -145,21 +144,14 @@ export const useClients = () => {
         throw new Error(error.message);
       }
 
-      toast({
-        title: 'Éxito',
-        description: 'Cliente creado correctamente'
-      });
+      // La notificación de éxito se maneja en el componente AddClientModal
 
       // Recargar clientes
       await loadClients();
       return { success: true, data };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
-      toast({
-        title: 'Error',
-        description: `No se pudo crear el cliente: ${errorMessage}`,
-        variant: 'destructive'
-      });
+      // Los errores se manejan en el componente AddClientModal
       return { success: false, error: errorMessage };
     }
   };
@@ -173,9 +165,9 @@ export const useClients = () => {
         throw new Error(error.message);
       }
 
-      toast({
-        title: 'Éxito',
-        description: 'Cliente actualizado correctamente'
+      showSuccess({
+        title: 'Cliente actualizado',
+        description: 'Los datos del cliente han sido actualizados correctamente'
       });
 
       // Recargar clientes
@@ -183,10 +175,9 @@ export const useClients = () => {
       return { success: true, data };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
-      toast({
-        title: 'Error',
-        description: `No se pudo actualizar el cliente: ${errorMessage}`,
-        variant: 'destructive'
+      showError({
+        title: 'Error al actualizar cliente',
+        description: `No se pudo actualizar el cliente: ${errorMessage}`
       });
       return { success: false, error: errorMessage };
     }
@@ -201,9 +192,9 @@ export const useClients = () => {
         throw new Error(error.message);
       }
 
-      toast({
-        title: 'Éxito',
-        description: 'Cliente eliminado correctamente'
+      showSuccess({
+        title: 'Cliente eliminado',
+        description: 'El cliente ha sido eliminado correctamente'
       });
 
       // Recargar clientes
@@ -211,10 +202,9 @@ export const useClients = () => {
       return { success: true };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
-      toast({
-        title: 'Error',
-        description: `No se pudo eliminar el cliente: ${errorMessage}`,
-        variant: 'destructive'
+      showError({
+        title: 'Error al eliminar cliente',
+        description: `No se pudo eliminar el cliente: ${errorMessage}`
       });
       return { success: false, error: errorMessage };
     }
@@ -248,9 +238,9 @@ export const useClients = () => {
         throw new Error(error.message);
       }
 
-      toast({
-        title: 'Éxito',
-        description: 'Estado del cliente actualizado correctamente'
+      showSuccess({
+        title: 'Estado actualizado',
+        description: 'El estado del cliente ha sido actualizado correctamente'
       });
 
       // Recargar clientes para asegurar sincronización con la base de datos
@@ -258,10 +248,9 @@ export const useClients = () => {
       return { success: true, data };
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
-      toast({
-        title: 'Error',
-        description: `No se pudo actualizar el estado: ${errorMessage}`,
-        variant: 'destructive'
+      showError({
+        title: 'Error al actualizar estado',
+        description: `No se pudo actualizar el estado: ${errorMessage}`
       });
       return { success: false, error: errorMessage };
     }

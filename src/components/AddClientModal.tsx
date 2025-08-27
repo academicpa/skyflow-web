@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { X, Plus, Loader2 } from 'lucide-react';
 import { useClients } from '@/hooks/useClients';
+import { useBeautifulToast } from '@/hooks/use-beautiful-toast';
 import { supabase } from '@/lib/supabase';
 
 interface AddClientModalProps {
@@ -22,7 +23,8 @@ interface Plan {
 }
 
 export const AddClientModal = ({ isOpen, onClose, onClientAdded }: AddClientModalProps) => {
-  const { addClient } = useClients();
+  const { addClient, getClientByEmail } = useClients();
+  const { showDuplicateEmailError, showClientCreatedSuccess, showError } = useBeautifulToast();
   const [loading, setLoading] = useState(false);
   const [planes, setPlanes] = useState<Plan[]>([]);
   const [loadingPlanes, setLoadingPlanes] = useState(false);
@@ -70,43 +72,95 @@ export const AddClientModal = ({ isOpen, onClose, onClientAdded }: AddClientModa
 
     setLoading(true);
     
-    const clientData = {
+    try {
+      // Verificar si el correo ya existe
+      const existingClient = getClientByEmail(formData.email.trim());
+      if (existingClient) {
+        showDuplicateEmailError(formData.email.trim());
+        setLoading(false);
+        return;
+      }
+
+      const clientData = {
         name: formData.name.trim(),
         email: formData.email.trim(),
         phone: formData.phone.trim() || undefined,
         company: formData.company.trim() || undefined,
         client_status: formData.client_status,
-         membership_plan: formData.membership_plan || null,
+        membership_plan: formData.membership_plan || null,
         notes: formData.notes.trim() || undefined,
         join_date: formData.join_date
       };
 
-    const result = await addClient(clientData);
-    
-    if (result.success) {
-      // Resetear formulario
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        company: '',
-        client_status: 'por_visitar' as const,
-        membership_plan: '',
-        notes: '',
-        join_date: new Date().toISOString().split('T')[0]
-      });
-      // Llamar callback para actualizar la lista en el Dashboard
-      if (onClientAdded) {
-        onClientAdded();
+      const result = await addClient(clientData);
+      
+      if (result.success) {
+        // Mostrar notificación de éxito
+        showClientCreatedSuccess(formData.name.trim());
+        
+        // Resetear formulario
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          company: '',
+          client_status: 'por_visitar' as const,
+          membership_plan: '',
+          notes: '',
+          join_date: new Date().toISOString().split('T')[0]
+        });
+        
+        // Llamar callback para actualizar la lista en el Dashboard
+        if (onClientAdded) {
+          onClientAdded();
+        }
+        onClose();
+      } else {
+        // Verificar si el error es específicamente de correo duplicado
+        if (result.error && result.error.includes('duplicate key value violates unique constraint')) {
+          showDuplicateEmailError(formData.email.trim());
+        } else {
+          showError({
+            title: 'Error al crear cliente',
+            description: result.error || 'Ocurrió un error inesperado'
+          });
+        }
       }
-      onClose();
+    } catch (error) {
+      showError({
+        title: 'Error inesperado',
+        description: 'Ocurrió un error al procesar la solicitud'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatPhoneNumber = (value: string) => {
+    // Remover todos los caracteres que no sean dígitos
+    const digitsOnly = value.replace(/\D/g, '');
+    
+    // Si tiene exactamente 10 dígitos y no empieza con +57, agregar +57
+    if (digitsOnly.length === 10 && !value.startsWith('+57')) {
+      return `+57 ${digitsOnly}`;
     }
     
-    setLoading(false);
+    // Si ya tiene +57, mantener el formato
+    if (value.startsWith('+57')) {
+      return value;
+    }
+    
+    // Para otros casos, devolver el valor original
+    return value;
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    if (field === 'phone') {
+      const formattedPhone = formatPhoneNumber(value);
+      setFormData(prev => ({ ...prev, [field]: formattedPhone }));
+    } else {
+      setFormData(prev => ({ ...prev, [field]: value }));
+    }
   };
 
   if (!isOpen) return null;
@@ -163,7 +217,7 @@ export const AddClientModal = ({ isOpen, onClose, onClientAdded }: AddClientModa
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
-                  placeholder="+1 234 567 8900"
+                  placeholder="3001234567 (se agregará +57 automáticamente)"
                 />
               </div>
 
