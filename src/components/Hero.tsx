@@ -19,7 +19,7 @@ export const Hero = () => {
       <div className="relative z-10 text-center px-6 max-w-6xl">
         <div className="animate-fade-in">
           <h1 className="hero-title mb-6">
-            Hacemos que tu música suene increíble
+            Hacemos que tu imagen se vea increíble
           </h1>
           <p className="hero-subtitle mb-8 max-w-3xl mx-auto">
             Fotografía, video y producción musical para artistas y marcas que quieren destacar. 
